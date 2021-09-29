@@ -14,8 +14,6 @@ namespace Task2
 
         public Item(T data)
         {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
             Data = data;
         }
     }
