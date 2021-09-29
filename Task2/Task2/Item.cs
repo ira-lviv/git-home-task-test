@@ -14,6 +14,7 @@ namespace Task2
 
         public Item(T data)
         {
+            
             Data = data;
         }
     }
