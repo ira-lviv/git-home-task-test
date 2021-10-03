@@ -10,14 +10,14 @@ namespace Task3
     {
         private List<string> _strings = new List<string>();
         public void Add(string text)
-        
+
+        {
+            if (!text.Any(c => char.IsDigit(c)))
             {
-                if (!text.Any(c => char.IsDigit(c)))
-                {
-                    _strings.Add(text);
-                }
+                _strings.Add(text);
             }
-        
+        }
+
 
         public void Output()
         {

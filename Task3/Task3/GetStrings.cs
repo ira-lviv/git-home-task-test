@@ -7,21 +7,25 @@ using System.Threading.Tasks;
 namespace Task3
 {
     public delegate void Input(string text);
-    
-    
+
+
     class GetStrings
     {
         // public  Input input;
         //public event Input input;
         public Action<string> input;
-        public void Run() {
+        public void Run()
+        {
             var text = "";
-            do
+            if (input != null)
             {
-                text = Console.ReadLine();
-                input(text);
+                do
+                {
+                    text = Console.ReadLine();
+                    input(text);
 
-            } while (text!="0");
+                } while (text != "0");
+            }
         }
     }
 }
