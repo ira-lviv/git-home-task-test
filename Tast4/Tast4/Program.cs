@@ -37,20 +37,8 @@ namespace Tast4
             Console.WriteLine();
             Console.WriteLine("Task 3");
             string InputString3 = "4:12,2:43,3:51,4:29,3:24,3:14,4:46,3:25,4:52,3:27";
-            List<Song> songs = new List<Song>();
-            string[] Songs = InputString3.Split(',');
-            foreach (var item in Songs)
-            {
-                songs.Add(new Song(item));
-            }
-            var totalMinute = songs.Sum(s => s.Minute);
-            var totalSecond = songs.Sum(s => s.Second);
-            if (totalSecond >= 60)
-            {
-                totalMinute += totalSecond / 60;
-                totalSecond = totalSecond % 60;
-            }
-            Console.WriteLine($"Total time of all songs is {totalMinute}:{totalSecond}");
+            var Songs= InputString3.Split(',').Select(x => TimeSpan.Parse("00:" + x)).Aggregate((current, next) => current + next);
+            Console.WriteLine($"Total time of all songs is {Songs}");
             Console.Read();
         }
     }
