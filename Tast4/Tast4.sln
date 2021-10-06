@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1684
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task4", "Task4\Task4.csproj", "{384393DE-B589-489E-9B10-24759F1B2103}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tast4", "Tast4\Tast4.csproj", "{384393DE-B589-489E-9B10-24759F1B2103}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {5531D7E7-6F05-4C58-8211-7F5498FE8F98}
+		SolutionGuid = {BB63F8AB-8B45-447D-A5F3-689823E4DDEC}
 	EndGlobalSection
 EndGlobal
