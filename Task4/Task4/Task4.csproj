@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{384393DE-B589-489E-9B10-24759F1B2103}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Tast4</RootNamespace>
-    <AssemblyName>Tast4</AssemblyName>
+    <RootNamespace>Task4</RootNamespace>
+    <AssemblyName>Task4</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
