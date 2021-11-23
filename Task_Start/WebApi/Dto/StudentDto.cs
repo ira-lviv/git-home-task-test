@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Models.Models;
 
@@ -8,21 +7,14 @@ namespace WebApi.Dto
 {
     public class StudentDto
     {
-        [Required]
-        [MinLength(2)]
         public string Name { get; set; }
 
         public int Id { get; set; }
-        [Required]
-        [DataType(DataType.Date)]
-        [Range(typeof(DateTime), "1/1/1900", "31/12/2100", ErrorMessage = "Value for {0} must be between {1} and {2}")]
+
         public DateTime BirthDate { get; set; }
 
-        [Required]
-        [DataType(DataType.PhoneNumber)]
         public string PhoneNumber { get; set; }
-        [Required]
-        [DataType(DataType.EmailAddress)]
+
         public string Email { get; set; }
 
         public string GitHubLink { get; set; }

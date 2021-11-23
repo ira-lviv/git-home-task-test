@@ -1,7 +1,6 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Models.Models;
 
@@ -10,17 +9,13 @@ namespace WebApi.Dto
     public class HomeTaskDto
     {
         public int Id { get; set; }
-        [Required]
-        [DataType(DataType.Date)]
-        [Range(typeof(DateTime), "1/1/1900", "31/12/2100", ErrorMessage = "Value for {0} must be between {1} and {2}")]
+
         public DateTime Date { get; set; }
-        [Required]
-        [MinLength(2)]
+
         public string Title { get; set; }
-        [Required]
-        [MinLength(2)]
+
         public string Description { get; set; }
-        [Range(1,100)]
+
         public int Number { get; set; }
 
         public int CourseId { get; set; }

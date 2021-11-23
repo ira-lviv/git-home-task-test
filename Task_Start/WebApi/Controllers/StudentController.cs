@@ -3,35 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using Services;
 using WebApi.Dto;
-using Microsoft.AspNetCore.Authorization;
-using System.Threading.Tasks;
 
 namespace WebApi.Controllers
 {
-   
-    public class StudentController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class StudentController : ControllerBase
     {
         private readonly StudentService _studentService;
-        private readonly IAuthorizationService _authorizationService;
 
-        public StudentController(StudentService studentService, IAuthorizationService authorizationService)
+        public StudentController(StudentService studentService)
         {
             _studentService = studentService;
-            _authorizationService = authorizationService;
         }
 
-      
+        // GET: api/Student
         [HttpGet]
-        public ViewResult Students()
+        public ActionResult<IEnumerable<StudentDto>> Get()
         {
-            var model = _studentService.GetAllStudents().Select(student =>StudentDto.FromModel(student));
-            return View(model);
+            return Ok(_studentService.GetAllStudents().Select(student => StudentDto.FromModel(student)));
         }
 
-
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Edit(int id)
+        // GET api/Student/5
+        [HttpGet("{id}")]
+        public ActionResult<StudentDto> Get(int id)
         {
             var student = _studentService.GetStudentById(id);
 
@@ -39,61 +34,40 @@ namespace WebApi.Controllers
             {
                 return NotFound();
             }
-            var result = await _authorizationService.AuthorizeAsync(User, student, "SameUserPolicy");
-            if (result.Succeeded)
-            {
-                var model = StudentDto.FromModel(student);
-                ViewBag.Action = "Edit";
-                return View(model);
-            }
-            return Forbid();
+
+            return Ok(StudentDto.FromModel(student));
         }
-        [Authorize]
+
+        // POST api/Student
         [HttpPost]
-        public async Task<IActionResult> Edit(StudentDto studentDto)
+        public ActionResult<StudentDto> Post([FromBody] StudentDto student)
         {
-            if (!ModelState.IsValid)
+            var result = _studentService.CreateStudent(student.ToModel());
+            if (result.HasErrors)
             {
-                ViewBag.Action = "Edit";
-                return View("Edit", studentDto);
+                return BadRequest(result.Errors);
             }
-
-            var result = await _authorizationService.AuthorizeAsync(User, studentDto, "SameUserPolicy");
-            if (result.Succeeded)
-            {
-                _studentService.UpdateStudent(studentDto.ToModel());
-
-                return RedirectToAction("Students");
-            }
-            return Forbid();
+            return Accepted(StudentDto.FromModel(result.Result));
         }
 
-        [HttpPost]
-        [Authorize(Roles ="Admin")]
-        public IActionResult Create(StudentDto studentDto)
+        // PUT api/Student/5
+        [HttpPut("{id}")]
+        public ActionResult Put(int id, [FromBody] StudentDto value)
         {
-            if (!ModelState.IsValid)
+            var result = _studentService.UpdateStudent(value.ToModel());
+            if (result.HasErrors)
             {
-                ViewBag.Action = "Create";
-                return View("Edit", studentDto);
+                return BadRequest(result.Errors);
             }
-            _studentService.CreateStudent(studentDto.ToModel());
-            return RedirectToAction("Students");
+            return Accepted();
         }
-        [Authorize(Roles ="Admin")]
-        [HttpGet]
-        public IActionResult Create()
-        {
-            var model = new StudentDto() {  };
-            ViewBag.Action = "Create";
-            return View("Edit", model);
-        }
-        [Authorize(Roles ="Admin")]
-        [HttpGet]
+
+        // DELETE api/Student/5
+        [HttpDelete("{id}")]
         public ActionResult Delete(int id)
         {
             _studentService.DeleteStudent(id);
-            return RedirectToAction("Students");
+            return Accepted();
         }
     }
 }
