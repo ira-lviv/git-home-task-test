@@ -3,29 +3,32 @@ using System.Collections.Generic;
 using System.Linq;
 using Services;
 using WebApi.Dto;
+using System;
+using WebApi.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CourseController : ControllerBase
+    public class CourseController : Controller
     {
         private readonly CourseService _courseService;
-
-        public CourseController(CourseService courseService)
+        private readonly StudentService _studentService;
+        public CourseController(CourseService courseService, StudentService studentService)
         {
             _courseService = courseService;
+            _studentService = studentService;
         }
-        // GET: api/Course
+       
         [HttpGet]
-        public ActionResult<IEnumerable<CourseDto>> Get()
+        public ViewResult Courses()
         {
-            return Ok(_courseService.GetAllCourses().Select(course => CourseDto.FromModel(course)));
+            IEnumerable<CourseDto> model =_courseService.GetAllCourses().Select(course => CourseDto.FromModel(course));
+            return View(model);
         }
 
-        // GET api/Course/5
-        [HttpGet("{id}")]
-        public ActionResult<CourseDto> Get(int id)
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Edit(int id)
         {
             var course = _courseService.GetCourseById(id);
 
@@ -34,39 +37,92 @@ namespace WebApi.Controllers
                 return NotFound();
             }
 
-            return Ok(CourseDto.FromModel(course));
+            var model=CourseDto.FromModel(course);
+            ViewBag.Action = "Edit";
+            return View(model);
         }
-
-        // POST api/Course
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public ActionResult<CourseDto> Post([FromBody] CourseDto course)
+        public IActionResult Edit(CourseDto courseDto)
         {
-            var createResult = _courseService.CreateCourse(course.ToModel());
-            if (createResult.HasErrors)
+            if (courseDto == null)
             {
-                return BadRequest(createResult.Errors);
+                return BadRequest();
             }
-            return Accepted(CourseDto.FromModel(createResult.Result));
+            _courseService.UpdateCourse(courseDto.ToModel());
+            return RedirectToAction("Courses");
         }
-
-        // PUT api/Course/5
-        [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] CourseDto value)
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult Create(CourseDto courseDto)
         {
-            var updateResult = _courseService.UpdateCourse(value.ToModel());
-            if (updateResult.HasErrors)
+            if (courseDto == null)
             {
-                return BadRequest(updateResult.Errors);
+                return BadRequest();
             }
-            return Accepted();
-        }
+            if (!ModelState.IsValid)
+            {
+                return View("Edit", courseDto);
+            }
 
-        // DELETE api/Course/5
-        [HttpDelete("{id}")]
+            try
+            {
+                _courseService.CreateCourse(courseDto.ToModel());
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("Name", ex.Message);
+                return View("Edit", courseDto);
+
+            }
+            return RedirectToAction("Courses");
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var model = new CourseDto() { EndDate = DateTime.Now, StartDate = DateTime.Now };
+            ViewBag.Action = "Create";
+            return View("Edit", model);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
         public ActionResult Delete(int id)
         {
             _courseService.DeleteCourse(id);
-            return Accepted();
+            return RedirectToAction("Courses");
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AssignStudents(int id)
+        {
+            var students = _studentService.GetAllStudents();
+            var course = _courseService.GetCourseById(id);
+            if (course == null)
+            {
+                return BadRequest();
+            }
+            var model = new CourseStudentsAssignViewModel();
+            model.Id = id;
+            model.StartDate = course.StartDate;
+            model.Name = course.Name;
+            model.EndDate = course.EndDate;
+            model.Students = new List<AssignementStudentViewModel>();
+            foreach(var student in students)
+            {
+                bool isAssigned = course.Students.Any(p => p.Id == student.Id);
+                model.Students.Add(new AssignementStudentViewModel() { StudentId = student.Id,IsAssigned=isAssigned,StudentFullName=student.Name }) ;
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AssignStudents(CourseStudentsAssignViewModel assignViewModel)
+        {
+            _courseService.SetStudentsToCourse(assignViewModel.Id,assignViewModel.Students.Where(p=>p.IsAssigned).Select(student=>student.StudentId));
+            return RedirectToAction("Courses");
         }
     }
 }

@@ -1,0 +1,77 @@
+﻿@model WebApi.Dto.CourseDto
+
+            <form asp-action=@ViewBag.Action>
+                <div class="form-horisontal">
+                    <h4>Course</h4>
+                    <hr />
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="Name" class="col-lg-2 col-form-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="StartDate" class="col-lg-2 col-form-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="StartDate" class="form-control" />
+                            <span asp-validation-for="StartDate" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="EndDate" class="col-lg-2 col-form-label"></label>
+                        <div class="col-md-10">
+                            <input asp-for="EndDate" class="form-control" />
+                            <span asp-validation-for="EndDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PassCredits" class="col-lg-2 col-form-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="PassCredits" class="form-control" />
+                                <span asp-validation-for="PassCredits" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <input type="submit" value="Save" class="btn btn-primary" />
+                        </div>
+                    </div>
+                </div>
+            </form>
+     @if (ViewBag.Action == "Edit") { 
+        <p>
+            <a asp-action="Create" asp-controller="HomeTask" asp-route-courseId=@Model.Id>Add new Home Task</a>
+        </p>
+}
+     <table class="table">
+         <tbody>
+             @if (Model.HomeTasks != null)
+            {
+                foreach(var homeTask in Model.HomeTasks)
+                {
+             <tr>
+                 <td>
+                     @Html.DisplayFor(item => homeTask.Title)
+                 </td>
+                 <td>
+                     @Html.DisplayFor(item => homeTask.Date)
+                 </td>
+                 <td>
+                     @Html.DisplayFor(item => homeTask.Description)
+                 </td>
+                 <td>
+                     <a asp-action="Evaluate" asp-controller="HomeTask" asp-route-id="@homeTask.Id">Evaluate</a> |
+                     <a asp-action="Edit" asp-controller="HomeTask" asp-route-id="@homeTask.Id">Edit</a> |
+                     <a asp-action="Delete" asp-controller="HomeTask" asp-route-id="@homeTask.Id">Delete</a>
+                 </td>
+             </tr>
+                }
+            }
+         </tbody>
+     </table>
+     <div>
+         <a asp-action="Courses">Back to List</a>
+     </div>
